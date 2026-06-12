@@ -1,34 +1,43 @@
 # blacksite
-A browser automation QA framework focused on discovering compliance, privacy, and analytics failures.  Essentially a spiritual successor to adtech-forensics-engine.
 
-Blacksite
+Playwright for things companies don't realize are broken.
 
-"Playwright for things companies don't realize are broken."
+Blacksite is a browser automation harness for detecting silent failures in analytics, consent management, authentication flows, and client-side integrations. 
 
-Repo Name
+Most QA suites focus on the functional UI. They check if a button click leads to the right page or if a form submission returns a success message. Blacksite is different. It investigates the hidden side effects of a page load. It finds the failures that don't trigger an error code but still create legal, privacy, or data integrity risks.
 
-blacksite
+### The Problem: Silent Failures
 
-Pitch
+A broken marketing tag won't crash your website. A cookie banner that fires trackers before a user clicks "Accept" won't show up in your application logs. These are silent failures. They persist for months because nobody is looking for them during standard feature testing. 
 
-A browser automation QA framework focused on discovering compliance, privacy, and analytics failures.
+I built this as a spiritual successor to `adtech-forensics-engine`. While that tool was designed for legal evidence gathering, Blacksite is designed for continuous monitoring. It ensures your site actually obeys your privacy and data policies in real time.
 
-Essentially a spiritual successor to adtech-forensics-engine.
+### How it works
 
-MVP
-navigate pages
-trigger edge-case events
-capture network activity
-compare expected vs observed behavior
-README Opening
+Blacksite uses a headless Playwright instance to mimic complex user behavior while monitoring the underlying network and DOM state. 
 
-Blacksite is a browser automation harness for detecting silent failures in analytics, consent management, authentication flows, and client-side integrations.
+*   **Event Triggering:** It doesn't just load a page. It triggers specific edge-case events: scroll-depth thresholds, rapid-fire clicks, and "mouse-out" movements that often trigger intrusive scripts.
+*   **Network Interception:** The tool captures every outgoing request. It compares these requests against a whitelist of approved domains and data types.
+*   **State Verification:** It checks if the "Consent" state in local storage matches the actual behavior of the trackers on the page.
+*   **Regression Testing for Privacy:** If a developer accidentally re-introduces a tracking pixel that was supposed to be removed, Blacksite catches it.
 
-Signals
+### MVP Capabilities
 
-This proves:
+1.  **Headless Navigation:** Crawls deep links to test compliance consistency across an entire domain.
+2.  **Network Auditing:** Captures and analyzes HAR files to find unauthorized data exfiltration.
+3.  **Visual Regression:** Detects when "dark patterns" or deceptive UI elements are added to consent flows.
+4.  **Policy Comparison:** Compares observed behavior against a JSON-based expected behavior manifest.
 
-Playwright
-investigation
-compliance
-real-world QA
+### Usage
+
+You define your compliance rules in a simple config file and run Blacksite against your staging or production URL.
+
+```bash
+python3 blacksite.py --config rules.json --target https://site.com
+```
+
+### Why this exists
+
+Compliance is usually treated as a one-time check during an audit. That approach fails as soon as the next deployment goes live. Blacksite treats privacy and analytics as a core part of the technical stack that requires automated testing just like any other feature. 
+
+If your marketing department adds a new script through Google Tag Manager, you need to know exactly what it's doing. Blacksite tells you.
